@@ -14,8 +14,7 @@ public class ManufacturerGenerator {
         return new Manufacturer(
                 RANDOM.nextInt(1000),
                 "Manufacturer" + RANDOM.nextInt(100),
-                LocalDate.now().minusYears(RANDOM.nextInt(100)),
-                Country.values()[RANDOM.nextInt(Country.values().length)]
+                LocalDate.now().minusYears(RANDOM.nextInt(100))
         );
     }
 }

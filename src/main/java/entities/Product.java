@@ -1,6 +1,6 @@
 package entities;
 
-import enums.ProductType;
+import enums.Country;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class Product {
-    private int id;  // примитив
-    private String name;  // строка
-    private double price;  // примитив
-    private LocalDate releaseDate;  // дата/время
-    private ProductType type;  // enum
-    private Manufacturer manufacturer;  // дополнительный атрибут
-    private List<Review> reviews;  // коллекция
+    private int id;
+    private double price; // примитив
+    private String name; // строка
+    private LocalDate releaseDate; // дата
+    private Country country; // enum
+    private Manufacturer manufacturer; // record
+    private List<Review> reviews; // коллекция
 }

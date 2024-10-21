@@ -1,7 +1,7 @@
 package generators;
 
 import entities.Product;
-import enums.ProductType;
+import enums.Country;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ public class ProductGenerator {
         for (int i = 0; i < count; i++) {
             products.add(new Product(
                     i + 1,
+                    RANDOM.nextDouble() * 1000,
                     "Entities.Product" + (i + 1),
-                    RANDOM.nextDouble() * 1000,  // цена
-                    LocalDate.now().minusDays(RANDOM.nextInt(365)),  // дата выпуска
-                    ProductType.values()[RANDOM.nextInt(ProductType.values().length)],  // тип продукта
-                    ManufacturerGenerator.generateManufacturer(),  // производитель
-                    ReviewGenerator.generateReviews(RANDOM.nextInt(10))  // отзывы
+                    LocalDate.now().minusDays(RANDOM.nextInt(365)),
+                    Country.values()[RANDOM.nextInt(Country.values().length)],
+                    ManufacturerGenerator.generateManufacturer(),
+                    ReviewGenerator.generateReviews(RANDOM.nextInt(10))
             ));
         }
         return products;

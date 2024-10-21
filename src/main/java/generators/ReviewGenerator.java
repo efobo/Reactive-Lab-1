@@ -15,10 +15,10 @@ public class ReviewGenerator {
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             reviews.add(new Review(
+                    i + 1,
                     LocalDate.now().minusDays(RANDOM.nextInt(365)),
                     "Reviewer" + (i + 1),
-                    RANDOM.nextInt(5) + 1,  // рейтинг от 1 до 5
-                    "Comment" + (i + 1)
+                    RANDOM.nextInt(5) + 1
             ));
         }
         return reviews;
