@@ -1,20 +1,14 @@
 package generators;
 
 import entities.Manufacturer;
-import enums.Country;
 
-import java.time.LocalDate;
-import java.util.Random;
-
-public class ManufacturerGenerator {
-
-    private static final Random RANDOM = new Random();
-
-    public static Manufacturer generateManufacturer() {
+public class ManufacturerGenerator extends AbstractGenerator<Manufacturer> {
+    @Override
+    protected Manufacturer generate() {
         return new Manufacturer(
-                RANDOM.nextInt(1000),
-                "Manufacturer" + RANDOM.nextInt(100),
-                LocalDate.now().minusYears(RANDOM.nextInt(100))
+                id++,
+                faker.company().name(),
+                faker.timeAndDate().birthday(0, 100)
         );
     }
 }

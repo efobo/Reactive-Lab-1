@@ -1,30 +1,32 @@
 package generators;
 
+import entities.Manufacturer;
 import entities.Product;
 import enums.Country;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class ProductGenerator {
+@RequiredArgsConstructor
+public class ProductGenerator extends AbstractGenerator<Product> {
+    private final List<Manufacturer> manufacturers;
+    private final int reviewCount;
 
-    private static final Random RANDOM = new Random();
+    @Override
+    protected Product generate() {
+        // faker.timeAndDate().past(365, TimeUnit.DAYS) TODO: использовать это или нет?
+        LocalDate releaseDate = LocalDate.now().minusDays(faker.random().nextInt(365));
+        ReviewGenerator reviewGenerator = new ReviewGenerator(releaseDate);
 
-    public static List<Product> generateProducts(int count) {
-        List<Product> products = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            products.add(new Product(
-                    i + 1,
-                    RANDOM.nextDouble() * 1000,
-                    "Entities.Product" + (i + 1),
-                    LocalDate.now().minusDays(RANDOM.nextInt(365)),
-                    Country.values()[RANDOM.nextInt(Country.values().length)],
-                    ManufacturerGenerator.generateManufacturer(),
-                    ReviewGenerator.generateReviews(RANDOM.nextInt(10))
-            ));
-        }
-        return products;
+        return new Product(
+                id++,
+                faker.number().randomDouble(2, 1, 100000),
+                faker.commerce().productName(),
+                releaseDate,
+                Country.values()[faker.random().nextInt(Country.values().length)],
+                manufacturers.get(faker.random().nextInt(manufacturers.size())),
+                reviewGenerator.generateList(reviewCount)
+        );
     }
 }
