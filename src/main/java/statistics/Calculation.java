@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Сalculation {
+public class Calculation {
 
     // Итерация через цикл
     public double calculateAverageRatingWithLoop(List<Product> products) {
