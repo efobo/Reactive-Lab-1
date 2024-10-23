@@ -15,7 +15,7 @@ public class ReviewGenerator extends AbstractGenerator<Review> {
                 id++,
                 LocalDate.now().minusDays(faker.random().nextInt(365)),
                 faker.internet().username(),
-                faker.number().numberBetween(1, 5)
+                faker.number().numberBetween(1, 6)
         );
     }
 }

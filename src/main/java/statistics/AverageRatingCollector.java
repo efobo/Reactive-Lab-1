@@ -3,6 +3,7 @@ package statistics;
 import entities.Manufacturer;
 import entities.Product;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -15,20 +16,35 @@ import java.util.stream.Collectors;
 
 public class AverageRatingCollector implements Collector<Product, Map<Manufacturer, AverageRatingCollector.RatingAccumulator>, Map<Manufacturer, Double>> {
 
+    private final List<Manufacturer> manufacturers;
+
+    public AverageRatingCollector(List<Manufacturer> manufacturers) {
+        this.manufacturers = manufacturers;
+    }
+
     @Override
     public Supplier<Map<Manufacturer, RatingAccumulator>> supplier() {
-        return HashMap::new;
+        return () -> {
+            Map<Manufacturer, RatingAccumulator> map = new HashMap<>();
+
+            manufacturers.forEach(manufacturer -> map.put(manufacturer, new RatingAccumulator()));
+            return map;
+        };
     }
+
 
     @Override
     public BiConsumer<Map<Manufacturer, RatingAccumulator>, Product> accumulator() {
         return (map, product) -> {
             Manufacturer manufacturer = product.getManufacturer();
-            RatingAccumulator accumulator = map.computeIfAbsent(manufacturer, k -> new RatingAccumulator());
+            RatingAccumulator accumulator = map.get(manufacturer);
 
-            product.getReviews().forEach(review -> accumulator.addRating(review.getRating()));
+            if (accumulator != null) { // Убедимся, что производитель существует
+                product.getReviews().forEach(review -> accumulator.addRating(review.getRating()));
+            }
         };
     }
+
 
     @Override
     public BinaryOperator<Map<Manufacturer, RatingAccumulator>> combiner() {
@@ -39,12 +55,13 @@ public class AverageRatingCollector implements Collector<Product, Map<Manufactur
         };
     }
 
+
     @Override
     public Function<Map<Manufacturer, RatingAccumulator>, Map<Manufacturer, Double>> finisher() {
         return map -> map.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue().getAverage()
+                        entry -> entry.getValue().getAverage() // Если нет отзывов, средний будет 0.0
                 ));
     }
 
@@ -54,7 +71,7 @@ public class AverageRatingCollector implements Collector<Product, Map<Manufactur
         return Set.of(Characteristics.UNORDERED);
     }
 
-    // Вспомогательный класс для накопления рейтингов
+
     static class RatingAccumulator {
         private int totalRating = 0;
         private int reviewCount = 0;

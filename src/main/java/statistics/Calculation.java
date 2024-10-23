@@ -12,19 +12,7 @@ import java.util.stream.Collectors;
 public class Calculation {
 
     // Итерация через цикл
-    public double calculateAverageRatingWithLoop(List<Product> products) {
-        int totalReviews = 0;
-        int totalRating = 0;
-        for (Product product : products) {
-            for (Review review : product.getReviews()) {
-                totalReviews++;
-                totalRating += review.getRating();
-            }
-        }
-        return totalReviews > 0 ? (double) totalRating / totalReviews : 0;
-    }
-
-    public Map<Manufacturer, Double> calculateAverageRatingWithLoop
+    public static Map<Manufacturer, Double> averageRatingWithLoop
             (List<Product> products, List<Manufacturer> manufacturers) {
         Map<Manufacturer, Double> averageRatings = new HashMap<>();
 
@@ -41,7 +29,6 @@ public class Calculation {
                 }
             }
 
-            // Вычисляем средний рейтинг, если есть отзывы
             double averageRating = totalReviews > 0 ? (double) totalRating / totalReviews : 0.0;
             averageRatings.put(manufacturer, averageRating);
         }
@@ -50,15 +37,7 @@ public class Calculation {
 
 
     // Использование Stream API
-    public double calculateAverageRatingWithStream(List<Product> products) {
-        return products.stream()
-                .flatMap(product -> product.getReviews().stream())
-                .mapToInt(Review::getRating)
-                .average()
-                .orElse(0);
-    }
-
-    public Map<Manufacturer, Double> calculateAverageRatingWithStream(List<Product> products, List<Manufacturer> manufacturers) {
+    public static Map<Manufacturer, Double> averageRatingWithStream(List<Product> products, List<Manufacturer> manufacturers) {
         return manufacturers.stream()
                 .collect(Collectors.toMap(
                         manufacturer -> manufacturer,
@@ -67,7 +46,7 @@ public class Calculation {
                             List<Review> reviews = products.stream()
                                     .filter(product -> product.getManufacturer().equals(manufacturer))
                                     .flatMap(product -> product.getReviews().stream())
-                                    .collect(Collectors.toList());
+                                    .toList();
 
 
                             return reviews.isEmpty() ? 0.0 : reviews.stream()
@@ -79,10 +58,22 @@ public class Calculation {
     }
 
     // использование своего коллектора
-    public Map<Manufacturer, Double> calculateAverageRatingWithMyCollector(List<Product> products, List<Manufacturer> manufacturers) {
+//    public static Map<Manufacturer, Double> averageRatingWithMyCollector(List<Product> products, List<Manufacturer> manufacturers) {
+//        return products.stream()
+//                .filter(product -> manufacturers.contains(product.getManufacturer()))
+//                .collect(new AverageRatingCollector());
+//    }
+
+    public static Map<Manufacturer, Double> averageRatingWithMyCollector(List<Product> products, List<Manufacturer> manufacturers) {
         return products.stream()
-                .filter(product -> manufacturers.contains(product.getManufacturer()))
-                .collect(new AverageRatingCollector());
+                .collect(new AverageRatingCollector(manufacturers));
+    }
+
+
+    public static void printCalculationResult (Map<Manufacturer, Double> averageRatings) {
+        for (Manufacturer manufacturer : averageRatings.keySet()) {
+            System.out.println("For manufacture \"" + manufacturer.getName() + "\" average Product Raiting is " + averageRatings.get(manufacturer));
+        }
     }
 
 }

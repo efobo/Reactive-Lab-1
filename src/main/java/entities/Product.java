@@ -3,12 +3,14 @@ package entities;
 import enums.Country;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
 @Getter
+@ToString
 public class Product {
     private int id;
     private double price; // примитив
