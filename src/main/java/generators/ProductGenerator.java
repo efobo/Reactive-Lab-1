@@ -15,8 +15,7 @@ public class ProductGenerator extends AbstractGenerator<Product> {
 
     @Override
     protected Product generate() {
-        // faker.timeAndDate().past(365, TimeUnit.DAYS) TODO: использовать это или нет?
-        LocalDate releaseDate = LocalDate.now().minusDays(faker.random().nextInt(365));
+        LocalDate releaseDate = faker.timeAndDate().birthday(0, 5);
         ReviewGenerator reviewGenerator = new ReviewGenerator(releaseDate);
 
         return new Product(
@@ -24,8 +23,8 @@ public class ProductGenerator extends AbstractGenerator<Product> {
                 faker.number().randomDouble(2, 1, 100000),
                 faker.commerce().productName(),
                 releaseDate,
-                Country.values()[faker.random().nextInt(Country.values().length)],
-                manufacturers.get(faker.random().nextInt(manufacturers.size())),
+                Country.values()[faker.number().numberBetween(0, Country.values().length)],
+                manufacturers.get(faker.number().numberBetween(0, manufacturers.size())),
                 reviewGenerator.generateList(reviewCount)
         );
     }

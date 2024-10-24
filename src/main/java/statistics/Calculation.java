@@ -10,10 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Calculation {
-
-    // Итерация через цикл
-    public static Map<Manufacturer, Double> averageRatingWithLoop
-            (List<Product> products, List<Manufacturer> manufacturers) {
+    // Итерационный цикл
+    public static Map<Manufacturer, Double> avgRatingWithLoop(List<Product> products, List<Manufacturer> manufacturers) {
         Map<Manufacturer, Double> averageRatings = new HashMap<>();
 
         for (Manufacturer manufacturer : manufacturers) {
@@ -35,19 +33,16 @@ public class Calculation {
         return averageRatings;
     }
 
-
-    // Использование Stream API
-    public static Map<Manufacturer, Double> averageRatingWithStream(List<Product> products, List<Manufacturer> manufacturers) {
+    // Конвейер с помощью Stream API на базе коллекторов из стандартной библиотеки
+    public static Map<Manufacturer, Double> avgRatingWithPipeline(List<Product> products, List<Manufacturer> manufacturers) {
         return manufacturers.stream()
                 .collect(Collectors.toMap(
                         manufacturer -> manufacturer,
                         manufacturer -> {
-
                             List<Review> reviews = products.stream()
                                     .filter(product -> product.getManufacturer().equals(manufacturer))
                                     .flatMap(product -> product.getReviews().stream())
                                     .toList();
-
 
                             return reviews.isEmpty() ? 0.0 : reviews.stream()
                                     .mapToInt(Review::getRating)
@@ -57,23 +52,15 @@ public class Calculation {
                 ));
     }
 
-    // использование своего коллектора
-//    public static Map<Manufacturer, Double> averageRatingWithMyCollector(List<Product> products, List<Manufacturer> manufacturers) {
-//        return products.stream()
-//                .filter(product -> manufacturers.contains(product.getManufacturer()))
-//                .collect(new AverageRatingCollector());
-//    }
-
-    public static Map<Manufacturer, Double> averageRatingWithMyCollector(List<Product> products, List<Manufacturer> manufacturers) {
+    // Собственный коллектор
+    public static Map<Manufacturer, Double> averageRatingWithCollector(List<Product> products, List<Manufacturer> manufacturers) {
         return products.stream()
                 .collect(new AverageRatingCollector(manufacturers));
     }
 
-
-    public static void printCalculationResult (Map<Manufacturer, Double> averageRatings) {
-        for (Manufacturer manufacturer : averageRatings.keySet()) {
-            System.out.println("For manufacture \"" + manufacturer.getName() + "\" average Product Raiting is " + averageRatings.get(manufacturer));
+    public static void printResult(Map<Manufacturer, Double> result) {
+        for (Manufacturer manufacturer : result.keySet()) {
+            System.out.printf("For manufacturer \"%s\" average product rating is %f\n", manufacturer.name(), result.get(manufacturer));
         }
     }
-
 }

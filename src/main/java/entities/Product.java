@@ -8,9 +8,9 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
 @ToString
+@AllArgsConstructor
 public class Product {
     private int id;
     private double price; // примитив

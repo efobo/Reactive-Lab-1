@@ -2,6 +2,7 @@ package statistics;
 
 import entities.Manufacturer;
 import entities.Product;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -14,30 +15,24 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class AverageRatingCollector implements Collector<Product, Map<Manufacturer, AverageRatingCollector.RatingAccumulator>, Map<Manufacturer, Double>> {
-
+@RequiredArgsConstructor
+public class AverageRatingCollector implements Collector<Product, Map<Manufacturer, AverageRatingAccumulator>, Map<Manufacturer, Double>> {
     private final List<Manufacturer> manufacturers;
 
-    public AverageRatingCollector(List<Manufacturer> manufacturers) {
-        this.manufacturers = manufacturers;
-    }
-
     @Override
-    public Supplier<Map<Manufacturer, RatingAccumulator>> supplier() {
+    public Supplier<Map<Manufacturer, AverageRatingAccumulator>> supplier() {
         return () -> {
-            Map<Manufacturer, RatingAccumulator> map = new HashMap<>();
-
-            manufacturers.forEach(manufacturer -> map.put(manufacturer, new RatingAccumulator()));
+            Map<Manufacturer, AverageRatingAccumulator> map = new HashMap<>();
+            manufacturers.forEach(manufacturer -> map.put(manufacturer, new AverageRatingAccumulator()));
             return map;
         };
     }
 
-
     @Override
-    public BiConsumer<Map<Manufacturer, RatingAccumulator>, Product> accumulator() {
+    public BiConsumer<Map<Manufacturer, AverageRatingAccumulator>, Product> accumulator() {
         return (map, product) -> {
             Manufacturer manufacturer = product.getManufacturer();
-            RatingAccumulator accumulator = map.get(manufacturer);
+            AverageRatingAccumulator accumulator = map.get(manufacturer);
 
             if (accumulator != null) { // Убедимся, что производитель существует
                 product.getReviews().forEach(review -> accumulator.addRating(review.getRating()));
@@ -45,50 +40,23 @@ public class AverageRatingCollector implements Collector<Product, Map<Manufactur
         };
     }
 
-
     @Override
-    public BinaryOperator<Map<Manufacturer, RatingAccumulator>> combiner() {
+    public BinaryOperator<Map<Manufacturer, AverageRatingAccumulator>> combiner() {
         return (map1, map2) -> {
             map2.forEach((manufacturer, accumulator) ->
-                    map1.merge(manufacturer, accumulator, RatingAccumulator::combine));
+                    map1.merge(manufacturer, accumulator, AverageRatingAccumulator::combine));
             return map1;
         };
     }
 
-
     @Override
-    public Function<Map<Manufacturer, RatingAccumulator>, Map<Manufacturer, Double>> finisher() {
+    public Function<Map<Manufacturer, AverageRatingAccumulator>, Map<Manufacturer, Double>> finisher() {
         return map -> map.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().getAverage() // Если нет отзывов, средний будет 0.0
-                ));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getAverage()));
     }
-
 
     @Override
     public Set<Characteristics> characteristics() {
         return Set.of(Characteristics.UNORDERED);
-    }
-
-
-    static class RatingAccumulator {
-        private int totalRating = 0;
-        private int reviewCount = 0;
-
-        void addRating(int rating) {
-            totalRating += rating;
-            reviewCount++;
-        }
-
-        RatingAccumulator combine(RatingAccumulator other) {
-            this.totalRating += other.totalRating;
-            this.reviewCount += other.reviewCount;
-            return this;
-        }
-
-        double getAverage() {
-            return reviewCount > 0 ? (double) totalRating / reviewCount : 0.0;
-        }
     }
 }
