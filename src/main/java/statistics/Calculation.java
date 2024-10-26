@@ -53,7 +53,7 @@ public class Calculation {
     }
 
     // Собственный коллектор
-    public static Map<Manufacturer, Double> averageRatingWithCollector(List<Product> products, List<Manufacturer> manufacturers) {
+    public static Map<Manufacturer, Double> avgRatingWithCollector(List<Product> products, List<Manufacturer> manufacturers) {
         return products.stream()
                 .collect(new AverageRatingCollector(manufacturers));
     }

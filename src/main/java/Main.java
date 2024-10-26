@@ -57,7 +57,7 @@ public class Main {
             System.out.print("Calculating with custom collector... ");
 
             startTime = System.currentTimeMillis();
-            Map<Manufacturer, Double> avgRatingWithCollector = Calculation.averageRatingWithCollector(products, manufacturers);
+            Map<Manufacturer, Double> avgRatingWithCollector = Calculation.avgRatingWithCollector(products, manufacturers);
             long timeWithCollector = System.currentTimeMillis() - startTime;
 
             System.out.println("Done.\n");
